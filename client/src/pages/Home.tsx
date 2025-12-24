@@ -14,7 +14,7 @@ import {
   Plus,
   PanelLeftClose,
   PanelLeftOpen,
-  Microphone,
+  Mic,
   Square
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -279,7 +279,7 @@ export default function Home() {
                   )}
                   onClick={isRecording ? stopRecording : startRecording}
                 >
-                  {isRecording ? <Square className="w-4 h-4" /> : <Microphone className="w-4 h-4" />}
+                  {isRecording ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                 </Button>
                  <Button 
                    size="icon" 
