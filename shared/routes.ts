@@ -24,6 +24,21 @@ export const api = {
       },
     },
   },
+  files: {
+    upload: {
+      method: 'POST' as const,
+      path: '/api/upload',
+      input: z.any(),
+      responses: {
+        200: z.object({
+          files: z.array(z.string()),
+          message: z.string(),
+        }),
+        400: errorSchemas.internal,
+        500: errorSchemas.internal,
+      },
+    },
+  },
   hospitals: {
     list: {
       method: 'GET' as const,

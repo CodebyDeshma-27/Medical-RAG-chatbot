@@ -6,6 +6,7 @@ import { HospitalCard } from "@/components/HospitalCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Send, 
   Target, 
@@ -15,7 +16,9 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Mic,
-  Square
+  Square,
+  Upload,
+  FileUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +33,7 @@ type Message = {
 };
 
 export default function Home() {
+  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([
     { 
       id: 'welcome', 
@@ -42,11 +46,14 @@ export default function Home() {
   const [showHospitals, setShowHospitals] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const chatMutation = useChat();
   const { data: hospitals, isLoading: isLoadingHospitals } = useHospitals(showHospitals);
 
@@ -111,6 +118,64 @@ export default function Home() {
     }
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      Array.from(files).forEach(file => {
+        if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+          formData.append('files', file);
+        }
+      });
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await response.json();
+      setUploadedFiles(prev => [...prev, ...result.files]);
+      toast({
+        title: "Success",
+        description: `${result.files.length} PDF file(s) uploaded successfully`,
+      });
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to upload PDF files. Only PDF files are supported.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleNewChat = () => {
+    setMessages([
+      { 
+        id: 'welcome', 
+        role: 'assistant', 
+        content: "Hello. I am MedCite, your medical research assistant. I can help you find clinical guidelines, drug interactions, and hospital protocols. How can I assist you today?" 
+      }
+    ]);
+    setInputValue("");
+    toast({
+      title: "New Chat Started",
+      description: "Your chat history has been cleared.",
+    });
+  };
+
   const handleSend = () => {
     if (!inputValue.trim()) return;
 
@@ -156,7 +221,7 @@ export default function Home() {
           !isSidebarOpen && "-translate-x-full lg:hidden"
         )}
       >
-        <Navigation />
+        <Navigation onNewChat={handleNewChat} />
       </aside>
 
       {/* Main Content */}
@@ -249,9 +314,21 @@ export default function Home() {
               size="icon" 
               variant="outline" 
               className="shrink-0 rounded-full h-11 w-11 border-dashed border-2 hover:border-primary hover:text-primary transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              data-testid="button-upload-file"
             >
-              <Plus className="w-5 h-5" />
+              <FileUp className="w-5 h-5" />
             </Button>
+            <input 
+              ref={fileInputRef}
+              type="file" 
+              multiple 
+              accept=".pdf"
+              onChange={handleFileUpload}
+              className="hidden"
+              data-testid="input-file-upload"
+            />
 
             {isRecording && (
               <div className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-full text-red-600 text-sm font-medium">
@@ -292,6 +369,19 @@ export default function Home() {
               </div>
             </div>
           </div>
+          {uploadedFiles.length > 0 && (
+            <div className="max-w-4xl mx-auto mt-2 p-2 bg-secondary/30 rounded-lg border border-border/50">
+              <p className="text-xs font-medium text-foreground mb-1">Uploaded PDFs ({uploadedFiles.length}):</p>
+              <div className="flex flex-wrap gap-1">
+                {uploadedFiles.map((file, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-border rounded text-xs text-muted-foreground">
+                    <FileUp className="w-3 h-3" />
+                    {file}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="text-center mt-2">
              <p className="text-[10px] text-muted-foreground">
                AI-generated content. Always verify with primary clinical sources.

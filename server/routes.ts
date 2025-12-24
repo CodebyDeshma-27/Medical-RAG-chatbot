@@ -9,6 +9,41 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
 
+  // File Upload Endpoint
+  app.post(api.files.upload.path, async (req, res) => {
+    try {
+      // Check if files were uploaded
+      if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).json({ message: "No files uploaded" });
+      }
+
+      const uploadedFiles: string[] = [];
+      
+      // Process uploaded files
+      for (const key in req.files) {
+        const file = Array.isArray(req.files[key]) ? req.files[key][0] : req.files[key];
+        
+        // Validate PDF type
+        if (file.mimetype === 'application/pdf' || file.name.endsWith('.pdf')) {
+          // In production, you'd save to disk/cloud storage
+          // For now, we'll just track the filename
+          uploadedFiles.push(file.name);
+        }
+      }
+
+      if (uploadedFiles.length === 0) {
+        return res.status(400).json({ message: "No valid PDF files found" });
+      }
+
+      res.json({
+        files: uploadedFiles,
+        message: `Successfully uploaded ${uploadedFiles.length} file(s)`
+      });
+    } catch (err) {
+      res.status(500).json({ message: "File upload failed" });
+    }
+  });
+
   // Mock Hospital Data
   app.get(api.hospitals.list.path, (_req, res) => {
     res.json([

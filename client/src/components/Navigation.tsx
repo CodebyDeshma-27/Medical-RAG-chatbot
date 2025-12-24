@@ -14,7 +14,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useState } from "react";
 
-export function Navigation({ className }: { className?: string }) {
+interface NavigationProps {
+  className?: string;
+  onNewChat?: () => void;
+}
+
+export function Navigation({ className, onNewChat }: NavigationProps) {
   const [location] = useLocation();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -63,7 +68,12 @@ export function Navigation({ className }: { className?: string }) {
       </nav>
 
       <div className="px-3 py-3 space-y-3 mt-auto">
-        <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90" size="sm">
+        <Button 
+          onClick={onNewChat}
+          className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90" 
+          size="sm"
+          data-testid="button-new-chat"
+        >
           <Plus className="w-4 h-4" />
           New Chat
         </Button>
