@@ -25,6 +25,7 @@ export function ChatHistory({
   onArchive,
 }: ChatHistoryProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   return (
     <div className="space-y-2">
@@ -52,7 +53,7 @@ export function ChatHistory({
                 <MoreVertical className="w-4 h-4 text-muted-foreground" />
               </button>
 
-              {openMenu === session.id && (
+              {openMenu === session.id && !confirmDelete && (
                 <div className="absolute right-0 top-8 bg-white border border-border rounded-lg shadow-lg z-50 w-40">
                   <button
                     onClick={() => {
@@ -66,16 +67,37 @@ export function ChatHistory({
                     Archive
                   </button>
                   <button
-                    onClick={() => {
-                      onDelete?.(session.id);
-                      setOpenMenu(null);
-                    }}
+                    onClick={() => setConfirmDelete(session.id)}
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-red-50 text-red-600 rounded-b-lg"
                     data-testid={`button-delete-${session.id}`}
                   >
                     <Trash2 className="w-4 h-4" />
                     Delete
                   </button>
+                </div>
+              )}
+
+              {confirmDelete === session.id && (
+                <div className="absolute right-0 top-8 bg-white border border-red-200 rounded-lg shadow-lg z-50 w-48 p-3">
+                  <p className="text-sm font-medium text-foreground mb-3">Delete this chat?</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setConfirmDelete(null)}
+                      className="flex-1 px-2 py-1.5 text-xs border border-border rounded hover:bg-secondary/50 text-foreground"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        onDelete?.(session.id);
+                        setConfirmDelete(null);
+                        setOpenMenu(null);
+                      }}
+                      className="flex-1 px-2 py-1.5 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
