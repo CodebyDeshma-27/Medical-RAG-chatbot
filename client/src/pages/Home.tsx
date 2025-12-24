@@ -13,7 +13,9 @@ import {
   Loader2, 
   Plus,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Microphone,
+  Square
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,8 +40,13 @@ export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showHospitals, setShowHospitals] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
   
   const scrollRef = useRef<HTMLDivElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const chatMutation = useChat();
   const { data: hospitals, isLoading: isLoadingHospitals } = useHospitals(showHospitals);
 
@@ -49,6 +56,60 @@ export default function Home() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Cleanup recording
+  useEffect(() => {
+    return () => {
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+      }
+    };
+  }, []);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      
+      audioChunksRef.current = [];
+      setRecordingTime(0);
+      setIsRecording(true);
+
+      mediaRecorder.onstart = () => {
+        recordingIntervalRef.current = setInterval(() => {
+          setRecordingTime(prev => prev + 1);
+        }, 1000);
+      };
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        if (recordingIntervalRef.current) {
+          clearInterval(recordingIntervalRef.current);
+        }
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        // For now, just convert to text placeholder
+        const duration = recordingTime;
+        const audioText = `[Audio message recorded - ${duration}s - Please transcribe or use your audio processing system]`;
+        setInputValue(audioText);
+      };
+
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      setIsRecording(false);
+    }
+  };
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
@@ -191,22 +252,40 @@ export default function Home() {
             >
               <Plus className="w-5 h-5" />
             </Button>
+
+            {isRecording && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-full text-red-600 text-sm font-medium">
+                <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
+                Recording: {recordingTime}s
+              </div>
+            )}
             
             <div className="flex-1 relative">
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                onKeyDown={(e) => e.key === 'Enter' && !isRecording && handleSend()}
                 placeholder="Ask a medical question (e.g., 'What are the updated guidelines for treating sepsis?')"
-                className="h-11 pr-12 rounded-full border-muted-foreground/20 focus-visible:ring-primary shadow-sm pl-6"
-                disabled={chatMutation.isPending}
+                className="h-11 pr-28 rounded-full border-muted-foreground/20 focus-visible:ring-primary shadow-sm pl-6"
+                disabled={chatMutation.isPending || isRecording}
               />
-              <div className="absolute right-1 top-1">
+              <div className="absolute right-1 top-1 flex gap-1">
+                <Button 
+                  size="icon" 
+                  variant={isRecording ? "default" : "outline"}
+                  className={cn(
+                    "h-9 w-9 rounded-full transition-all",
+                    isRecording ? "bg-red-600 hover:bg-red-700" : "hover:text-primary"
+                  )}
+                  onClick={isRecording ? stopRecording : startRecording}
+                >
+                  {isRecording ? <Square className="w-4 h-4" /> : <Microphone className="w-4 h-4" />}
+                </Button>
                  <Button 
                    size="icon" 
                    className="h-9 w-9 rounded-full bg-primary hover:bg-primary/90 transition-all"
                    onClick={handleSend}
-                   disabled={!inputValue.trim() || chatMutation.isPending}
+                   disabled={!inputValue.trim() || chatMutation.isPending || isRecording}
                  >
                    <Send className="w-4 h-4 text-white" />
                  </Button>

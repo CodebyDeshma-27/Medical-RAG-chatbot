@@ -4,13 +4,19 @@ import {
   FileText, 
   ShieldCheck, 
   Lock,
-  CheckCircle2
+  CheckCircle2,
+  Settings,
+  LogOut,
+  Plus
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 export function Navigation({ className }: { className?: string }) {
   const [location] = useLocation();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const navItems = [
     { label: "Chat Session", icon: MessageSquare, href: "/" },
@@ -56,7 +62,40 @@ export function Navigation({ className }: { className?: string }) {
         })}
       </nav>
 
-      <div className="p-4 mt-auto">
+      <div className="px-3 py-3 space-y-3 mt-auto">
+        <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90" size="sm">
+          <Plus className="w-4 h-4" />
+          New Chat
+        </Button>
+
+        <div className="relative">
+          <button
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+            className="w-full flex items-center gap-3 px-3 py-3 rounded-lg bg-secondary/50 border border-border/50 hover:bg-secondary/80 transition-colors text-left"
+          >
+            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">
+              DR
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground">Dr. Research</p>
+              <p className="text-xs text-muted-foreground">Medical Researcher</p>
+            </div>
+          </button>
+
+          {showProfileMenu && (
+            <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-border rounded-lg shadow-lg z-50">
+              <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-secondary/50 first:rounded-t-lg">
+                <Settings className="w-4 h-4" />
+                Settings
+              </button>
+              <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 last:rounded-b-lg">
+                <LogOut className="w-4 h-4" />
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
+
         <div className="bg-secondary/50 rounded-xl p-4 border border-border/50">
           <div className="flex items-center gap-3 text-muted-foreground">
             <Lock className="w-4 h-4" />
