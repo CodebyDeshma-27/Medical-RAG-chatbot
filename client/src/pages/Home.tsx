@@ -18,8 +18,10 @@ import {
   Mic,
   Square,
   Upload,
-  FileUp
+  FileUp,
+  X
 } from "lucide-react";
+import { HospitalMap } from "@/components/HospitalMap";
 import { cn } from "@/lib/utils";
 
 // Types for local state

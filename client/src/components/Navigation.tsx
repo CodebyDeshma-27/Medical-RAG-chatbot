@@ -12,6 +12,7 @@ import {
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { ChatHistory } from "./ChatHistory";
 import { useState } from "react";
 
 interface NavigationProps {
@@ -22,12 +23,27 @@ interface NavigationProps {
 export function Navigation({ className, onNewChat }: NavigationProps) {
   const [location] = useLocation();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [chatSessions, setChatSessions] = useState([
+    { id: "1", title: "Sepsis Treatment Guidelines", date: "Today" },
+    { id: "2", title: "Drug Interaction Query", date: "Yesterday" },
+    { id: "3", title: "Hospital Protocol Review", date: "2 days ago" },
+  ]);
 
   const navItems = [
     { label: "Chat Session", icon: MessageSquare, href: "/" },
     { label: "Retrieved Context", icon: FileText, href: "/context" },
     { label: "Privacy & Model", icon: ShieldCheck, href: "/privacy" },
   ];
+
+  const handleDeleteChat = (id: string) => {
+    setChatSessions(prev => prev.filter(s => s.id !== id));
+  };
+
+  const handleArchiveChat = (id: string) => {
+    setChatSessions(prev => prev.map(s => 
+      s.id === id ? { ...s, archived: !s.archived } : s
+    ));
+  };
 
   return (
     <div className={cn("flex flex-col h-full bg-card border-r border-border", className)}>
@@ -46,7 +62,7 @@ export function Navigation({ className, onNewChat }: NavigationProps) {
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = location === item.href;
           return (
@@ -65,6 +81,15 @@ export function Navigation({ className, onNewChat }: NavigationProps) {
             </Link>
           );
         })}
+
+        {/* Chat History Section */}
+        <div className="mt-6 border-t border-border/50 pt-4">
+          <ChatHistory 
+            sessions={chatSessions.filter(s => !s.archived)}
+            onDelete={handleDeleteChat}
+            onArchive={handleArchiveChat}
+          />
+        </div>
       </nav>
 
       <div className="px-3 py-3 space-y-3 mt-auto">
@@ -94,11 +119,17 @@ export function Navigation({ className, onNewChat }: NavigationProps) {
 
           {showProfileMenu && (
             <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-border rounded-lg shadow-lg z-50">
-              <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-secondary/50 first:rounded-t-lg">
-                <Settings className="w-4 h-4" />
-                Settings
-              </button>
-              <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 last:rounded-b-lg">
+              <Link href="/settings">
+                <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-secondary/50 first:rounded-t-lg"
+                  data-testid="button-settings"
+                >
+                  <Settings className="w-4 h-4" />
+                  Settings
+                </button>
+              </Link>
+              <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 last:rounded-b-lg"
+                data-testid="button-logout"
+              >
                 <LogOut className="w-4 h-4" />
                 Log out
               </button>
