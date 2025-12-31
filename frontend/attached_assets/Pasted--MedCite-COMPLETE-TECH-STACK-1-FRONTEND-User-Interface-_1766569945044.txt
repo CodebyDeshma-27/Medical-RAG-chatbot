@@ -1,0 +1,188 @@
+🧠 MedCite — COMPLETE TECH STACK
+1️⃣ FRONTEND (User Interface Layer)
+
+Purpose: Chat UI, explainability, maps, privacy controls
+
+Framework: React (Vite)
+
+Styling: Tailwind CSS
+
+Language: JavaScript (can upgrade to TypeScript later)
+
+Icons: Lucide Icons (outline SVGs)
+
+State Management: React Hooks (useState, useEffect, useContext)
+
+HTTP Client: Fetch API / Axios
+
+Maps: Google Maps JavaScript API
+
+UI Hosting (optional): Replit / Vercel / Netlify
+
+Why this works:
+
+Fast development
+
+Clean medical UI
+
+Easy integration with Flask
+
+Replit-friendly
+
+2️⃣ BACKEND (API & RAG Orchestration)
+
+Purpose: Handle queries, run RAG pipeline, manage citations
+
+Framework: Flask (Python)
+
+API Style: REST
+
+Language: Python 3.10+
+
+Server: Flask built-in (Gunicorn for deployment)
+
+Core endpoints:
+
+/query → User question → RAG → answer + citations
+
+/retrieved-context → Return chunks used
+
+/nearby-hospitals → Optional maps support
+
+Why Flask:
+
+Lightweight
+
+Perfect for ML + RAG
+
+Easy to reason about
+
+3️⃣ LLM (Reasoning & Answer Generation)
+
+Purpose: Generate grounded medical answers
+
+LLM Runtime: Ollama (local inference)
+
+Primary Model: llama3.1:8b
+
+Alternative (low RAM): mistral:7b
+
+Key benefit:
+
+Runs locally
+
+No cloud dependency
+
+Strong privacy guarantees
+
+4️⃣ EMBEDDING MODEL (Core of RAG)
+
+Purpose: Convert text chunks into vectors
+
+Primary Choice: nomic-embed-text (via Ollama)
+
+Alternative: all-MiniLM-L6-v2
+
+Why:
+
+High-quality semantic search
+
+Fast
+
+Works well with medical text
+
+5️⃣ VECTOR DATABASE (Knowledge Retrieval)
+
+Purpose: Store and retrieve document embeddings
+
+Vector DB: ChromaDB
+
+Storage: Local persistent directory
+
+Metadata Stored:
+
+Source name
+
+Page number
+
+Document type
+
+Year
+
+Why Chroma:
+
+Simple
+
+Local-first
+
+Excellent for academic projects
+
+6️⃣ DOCUMENT INGESTION PIPELINE
+
+Purpose: Prepare books, theses, and images for RAG
+
+PDF Parsing: PyMuPDF / pdfplumber
+
+DOCX Parsing: python-docx
+
+Text Chunking: LangChain text splitters (or custom)
+
+Image OCR: Tesseract OCR + pytesseract
+
+Preprocessing: Cleaning, chunk overlap
+
+This is where your “training data” actually lives.
+
+7️⃣ RAG PIPELINE (Core Intelligence Layer)
+
+Purpose: Tie everything together
+
+Flow:
+
+User query
+
+Query → embedding
+
+Top-K similarity search (ChromaDB)
+
+Context + question → Ollama LLM
+
+Answer + citations returned
+
+Libraries:
+
+LangChain (optional)
+
+Custom Python pipeline (recommended for clarity)
+
+8️⃣ PRIVACY & EXPLAINABILITY LAYER
+
+Purpose: Trust, compliance, transparency
+
+Local LLM inference (Ollama)
+
+Local embeddings + vector DB
+
+Mandatory citation rendering
+
+Retrieved context visibility
+
+No chat storage
+
+This is a design principle, not just code.
+
+9️⃣ MAPS & LOCATION (OPTIONAL MODULE)
+
+Purpose: Nearby hospital discovery
+
+API: Google Maps JavaScript API
+
+Features:
+
+Location toggle
+
+Hospital markers
+
+Distance calculation
+
+Privacy Control: User-enabled only
