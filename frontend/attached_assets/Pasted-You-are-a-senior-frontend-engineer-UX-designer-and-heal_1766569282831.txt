@@ -1,0 +1,182 @@
+You are a senior frontend engineer, UX designer, and healthcare product architect.
+
+Build a production-quality medical chatbot website frontend called “MedCite”.
+
+MedCite is a citation-backed, explainable medical AI assistant powered by
+Ollama LLM + Retrieval-Augmented Generation (RAG).
+
+TECH STACK REQUIREMENTS:
+- React (Vite)
+- Tailwind CSS
+- JavaScript
+- Lucide Icons (outline style SVGs)
+- Fully responsive (mobile-first, desktop-polished)
+- Ready to integrate with a Flask backend API
+
+--------------------------------------------------
+DESIGN PHILOSOPHY
+--------------------------------------------------
+The UI must feel:
+- Calm and medical-grade
+- Trustworthy and academic
+- Clean, minimal, and transparent
+- Never flashy or gimmicky
+
+--------------------------------------------------
+GLOBAL ICONOGRAPHY SYSTEM
+--------------------------------------------------
+Use Lucide icons consistently.
+Icons must always support meaning, not decoration.
+
+Icon mappings:
+- App logo: Brain + CheckCircle (AI + verified knowledge)
+- Chat: MessageSquare
+- Retrieved Context: FileText
+- Citations: Link
+- Privacy & Explainability: ShieldCheck
+- Local / Federated Processing: Network
+- Upload Documents: UploadCloud
+- Location Finder: Globe (default), MapPin (active)
+- Hospital Results: Hospital
+- Confidence Indicator: BarChart
+- Info / Disclaimer: Info
+- Focus Mode: Target
+- Session Status: Lock (local session)
+
+--------------------------------------------------
+LAYOUT STRUCTURE
+--------------------------------------------------
+
+LEFT SIDEBAR:
+- App name: MedCite
+- Minimal logo icon
+- Navigation tabs with icons:
+  • Chat
+  • Retrieved Context
+  • Privacy & Explainability
+- Session indicator at bottom:
+  “Local Session Active” with lock icon
+
+MAIN CHAT INTERFACE:
+- ChatGPT-style layout
+- User messages right-aligned
+- Assistant messages left-aligned
+- Assistant header:
+  🧠 MedCite
+- Support Markdown responses
+
+Below each assistant answer:
+- Inline citations:
+  [📄 Source Name – Page/Section]
+- Expandable panel:
+  📄 “Retrieved Context Used”
+  Displays raw chunks from VectorDB
+
+--------------------------------------------------
+ANSWER QUALITY & EXPLAINABILITY
+--------------------------------------------------
+
+For each response display:
+- Answer Confidence Indicator:
+  Bar-style visual (Low / Medium / High)
+- Button:
+  ❓ “Why this answer?”
+  Opens a panel explaining:
+  - Why these chunks were selected
+  - How RAG was used
+  - That answers are document-grounded
+
+--------------------------------------------------
+LOCATION-BASED HOSPITAL FINDER
+--------------------------------------------------
+
+UI:
+- Button near chat input:
+  🌍 Find Nearby Hospitals
+
+Privacy-first behavior:
+- Location access OFF by default
+- Toggle switch with lock icon
+- Clear explanation before enabling
+
+When enabled:
+- Load Google Maps API
+- Detect user location
+- Display nearby hospitals on map
+- Use 🏥 icon markers
+- Show hospital cards with:
+  Name, distance, rating
+
+When disabled:
+- Show 🔒 message explaining location is off
+
+--------------------------------------------------
+PRIVACY, FEDERATED & EXPLAINABLE AI PAGE
+--------------------------------------------------
+
+Create a dedicated page with icon-led sections:
+
+🛡️ Privacy First
+- No personal data stored
+- No chat history saved
+
+🧩 Local & Federated AI
+- Ollama LLM runs locally
+- Embeddings stored locally
+- No cloud inference
+
+📄 Explainable RAG
+- Answers generated only from uploaded documents
+- Mandatory citations
+- Retrieved context always visible
+
+--------------------------------------------------
+UX & MICROINTERACTIONS
+--------------------------------------------------
+
+- Soft hover effects
+- Subtle icon animations
+- Typing indicator while model responds
+- Smooth expand/collapse panels
+- Focus Mode toggle:
+  Hides sidebar and extras for distraction-free reading
+
+--------------------------------------------------
+EMPTY & ERROR STATES
+--------------------------------------------------
+
+Design helpful empty states:
+- No question asked yet
+- No documents uploaded
+- Backend unavailable
+
+Use calm language and icons.
+
+--------------------------------------------------
+DISCLAIMER
+--------------------------------------------------
+
+Display a visible disclaimer with info icon:
+“This system provides informational support only and is not a medical diagnosis tool.”
+
+--------------------------------------------------
+API INTEGRATION POINTS (DO NOT IMPLEMENT BACKEND)
+--------------------------------------------------
+
+- POST /query
+- GET /retrieved-context
+- GET /nearby-hospitals
+
+--------------------------------------------------
+OUTPUT REQUIREMENTS
+--------------------------------------------------
+
+- Generate complete React frontend code
+- Use Tailwind utilities only (no inline CSS)
+- Clean folder structure
+- Reusable components
+- Google Maps API placeholder key
+- README with setup instructions
+
+The final UI should feel like a real medical AI product,
+not a student demo or chatbot experiment.

@@ -1,0 +1,11 @@
+flask
+chromadb
+langchain
+langchain-community
+langchain-huggingface
+sentence-transformers
+python-dotenv
+pymupdf
+torch
+transformers
+accelerate

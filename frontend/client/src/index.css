@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Medical Grade Palette - Calm Teal/Blue/Gray */
+  --font-display: 'Manrope', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Pure White Backgrounds for Clinical Feel */
+  --background: 210 20% 99%;
+  --foreground: 215 25% 27%;
+
+  /* Trustworthy Medical Blue/Teal */
+  --primary: 187 100% 32%; /* #00A3A3 - Deep Teal */
+  --primary-foreground: 0 0% 100%;
+
+  /* Soft Secondary for UI elements */
+  --secondary: 210 20% 96%;
+  --secondary-foreground: 215 25% 27%;
+
+  /* Muted text for readability without harsh contrast */
+  --muted: 210 20% 96%;
+  --muted-foreground: 215 16% 47%;
+
+  /* Accent for highlights */
+  --accent: 187 40% 94%;
+  --accent-foreground: 187 100% 32%;
+
+  /* Clinical Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  /* Borders */
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 187 100% 32%;
+
+  /* Cards need to be clean white */
+  --card: 0 0% 100%;
+  --card-foreground: 215 25% 27%;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  /* Dark mode - Deep Blue/Slate for night shifts */
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+
+  --card: 222 47% 10%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222 47% 10%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 187 70% 50%;
+  --primary-foreground: 222 47% 11%;
+
+  --secondary: 217 33% 17%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+
+  --accent: 187 30% 20%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 187 70% 50%;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply tracking-tight font-semibold;
+  }
+}
+
+@layer components {
+  /* Custom scrollbar for clinical look */
+  .medical-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .medical-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .medical-scroll::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full;
+  }
+
+  .medical-scroll::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40;
+  }
+
+  .glass-panel {
+    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border border-border shadow-sm;
+  }
+}
+
+/* Animations */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
