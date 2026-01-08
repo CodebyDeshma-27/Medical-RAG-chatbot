@@ -11,5 +11,17 @@ venv/
 __pycache__/
 *.pyc
 
+# RAG / Data files (IMPORTANT)
+backend/data/
+*.pdf
+*.docx
+*.txt
+
+# Vector DB / embeddings
+chroma/
+faiss_index/
+vectorstore/
+embeddings/
+
 # General
 .local/
