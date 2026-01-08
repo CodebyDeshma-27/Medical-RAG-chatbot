@@ -11,6 +11,9 @@ def load_pdfs(data_dir="data"):
                 text = ""
                 for page in pdf:
                     text += page.get_text("text")
-                docs.append(Document(page_content=text, metadata={"source": filename}))
+                docs.append(Document(
+                    page_content=text,
+                    metadata={"source": filename}
+                ))
     print(f"✅ Loaded {len(docs)} documents from {data_dir}")
     return docs

@@ -1,15 +1,17 @@
 from flask import Flask, request, jsonify
-from utils.rag_pipline import get_rag_chain
+from utils.rag_pipeline import get_rag_chain
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 
-# Initialize RAG chain (Chroma + BioMistral LLM)
+# Initialize RAG chain (Chroma + Groq LLaMA)
 qa_chain = get_rag_chain()
 
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({
-        "message": "✅ Medical RAG Chatbot (BioMistral) is running!",
+        "message": "✅ Medical RAG Chatbot (Groq + LLaMA-3.1-8B) running!",
         "usage": "POST /ask → {'query': 'your question'}"
     })
 
@@ -22,31 +24,21 @@ def ask():
         if not query:
             return jsonify({"error": "Query field is required"}), 400
 
-        # Run RAG
         result = qa_chain(query)
 
-        answer = result["result"]
-
-        # 🔑 Extract retrieved chunks
-        source_docs = result.get("source_documents", [])
-
-        rag_context = [
-            doc.page_content for doc in source_docs
-        ]
-
-        sources = [
-            doc.metadata.get("source", "Unknown")
-            for doc in source_docs
-        ]
-
         return jsonify({
-            "answer": answer,
-            "sources": list(set(sources)),
-            "ragContext": rag_context
+            "answer": result["result"],
+            "sources": list({
+                doc.metadata.get("source", "Unknown")
+                for doc in result["source_documents"]
+            }),
+            "ragContext": [
+                doc.page_content
+                for doc in result["source_documents"]
+            ]
         })
 
     except Exception as e:
-        print("❌ Error:", e)
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
