@@ -15,7 +15,7 @@ export async function registerRoutes(
     try {
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ message: "No files uploaded" });
-      }
+      } 
 
       const uploadedFiles: string[] = [];
 
@@ -67,7 +67,7 @@ export async function registerRoutes(
           },
         }
       );
-      
+
       const hospitals = googleRes.data.results.map(
         (place: any, i: number) => ({
           id: i + 1,
@@ -100,10 +100,10 @@ export async function registerRoutes(
       );
 
       res.json({
-        message: flaskResponse.data.answer,
-        citations: flaskResponse.data.sources ?? [],
+        message: flaskResponse.data.message,     // ✅ CORRECT
+        citations: flaskResponse.data.citations ?? [],
         ragContext: flaskResponse.data.ragContext ?? [],
-        confidence: "high",
+        confidence: flaskResponse.data.confidence ?? "high",
       });
     } catch (error: any) {
       console.error("❌ Flask error:", error.message);

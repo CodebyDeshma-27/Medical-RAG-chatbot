@@ -2,6 +2,7 @@ flask
 chromadb
 langchain
 langchain-community
+langchain-groq
 langchain-huggingface
 sentence-transformers
 python-dotenv

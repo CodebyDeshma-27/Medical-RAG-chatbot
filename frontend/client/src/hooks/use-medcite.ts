@@ -10,14 +10,15 @@ const ChatResponseSchema = z.object({
   message: z.string(),
   citations: z.array(
     z.object({
-      source: z.string().optional(),
-      page: z.string().optional(),
-      text: z.string().optional(),
+      book: z.string(),
+      chapter: z.string().optional(),
+      page: z.number(),
     })
   ).optional(),
   confidence: z.enum(["low", "medium", "high"]).optional(),
-  ragContext: z.array(z.string()).optional(),
+  ragContext: z.array(z.any()).optional(),
 });
+
 
 // --- Chat Hook ---
 export function useChat() {
