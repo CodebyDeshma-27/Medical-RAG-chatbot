@@ -1,4 +1,4 @@
-# 🩺 Medical RAG Chatbot
+# 🩺 MEDICAL RAG CHATBOT
 
 A **Medical Retrieval-Augmented Generation (RAG) Chatbot** that answers medical questions using document-based knowledge instead of hallucinated responses.
 
