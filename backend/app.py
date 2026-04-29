@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from utils.rag_pipeline import get_rag_components
@@ -7,7 +8,14 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-qa_chain, llm = get_rag_components()
+try:
+    qa_chain, llm = get_rag_components()
+except KeyError as e:
+    missing_key = e.args[0]
+    raise RuntimeError(
+        f"Missing required environment variable: {missing_key}. "
+        "Create backend/.env from backend/.env.example or set GROQ_API_KEY."
+    ) from e
 
 
 # -----------------------------

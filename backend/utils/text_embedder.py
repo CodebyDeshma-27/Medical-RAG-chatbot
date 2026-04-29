@@ -1,9 +1,11 @@
-from langchain_community.vectorstores import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.embeddings import HuggingFaceEmbeddings       # ✅ fixed
+from langchain_community.document_loaders import TextLoader    # ✅ fixed
 
 BATCH_SIZE = 1000
 
-def store_embeddings(docs, persist_dir="embeddings/text"):
+
+def store_embeddings(docs, persist_dir="backend/embeddings/text"):
     print("⚙️ Creating text embeddings (batched)...")
 
     embeddings = HuggingFaceEmbeddings(
@@ -23,3 +25,14 @@ def store_embeddings(docs, persist_dir="embeddings/text"):
         print(f"  ✅ Embedded {min(i + BATCH_SIZE, total)} / {total}")
 
     print(f"💾 Embeddings stored at: {persist_dir}")
+
+
+if __name__ == "__main__":
+    print("📂 Loading documents...")
+
+    loader = TextLoader("backend/sample.txt")
+    docs = loader.load()
+
+    print(f"📄 Loaded {len(docs)} document(s)")
+
+    store_embeddings(docs)
